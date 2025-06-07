@@ -2,8 +2,10 @@ import mongoose from "mongoose";
 import { SignOptions, VerifyOptions } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import { JWT_REFRESH_SECRET, JWT_SECRET } from "../../Shared/constants/env";
-import Role from "../../Shared/constants/roles";
+
 import { TOKEN_EXPIRATION } from "../../Shared/constants/config";
+import Role from "../../Shared/constants/roles";
+
 
 
 
