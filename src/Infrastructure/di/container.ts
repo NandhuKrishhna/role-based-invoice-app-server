@@ -10,9 +10,12 @@ import { SessionRepository } from "../Database/repositories/SessionRepository";
 import { ISessionRepositoryToken } from "../../Domain/repositories/ISessionRepository";
 import { SuperAdminController } from "../../Presentation/controllers/super-admin/superAdminController";
 import { ISuperAdminControllerToken } from "../../Domain/interfaces/ISuperAdminController";
+import { IAdminControllerToken } from "../../Domain/interfaces/IAdminController";
+import { AdminController } from "../../Presentation/controllers/adminController";
 
 Container.set(IUserRepositoryToken, new UserRepository());
 Container.set(ISessionRepositoryToken, new SessionRepository());
 Container.set(IAuthControllerToken, Container.get(AuthController));
 Container.set(IUserUseCaseToken, Container.get(AuthUseCase));
-Container.set(ISuperAdminControllerToken, Container.get(SuperAdminController))
+Container.set(ISuperAdminControllerToken, Container.get(SuperAdminController));
+Container.set(IAdminControllerToken, Container.get(AdminController));
