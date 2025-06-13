@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MONGODB_URL } from "../../Shared/constants/env";
-console.log(`Connecting to database at ${MONGODB_URL}`);
+
 
 const connectToDatabase = async () => {
     try {
