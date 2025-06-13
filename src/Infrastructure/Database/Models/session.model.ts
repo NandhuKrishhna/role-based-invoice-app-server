@@ -5,7 +5,7 @@ import Role from "../../../Shared/constants/roles";
 
 export interface SessionDocument extends Document {
   _id?: mongoose.Types.ObjectId;
-  userId: mongoose.Types.ObjectId;
+  userId: string;
   role: Role;
   expiresAt: Date;
   createdAt: Date;
@@ -15,7 +15,7 @@ export interface SessionDocument extends Document {
 const sessionSchema = new Schema<SessionDocument>({
   userId: {
     ref: "User",
-    type: Schema.Types.ObjectId,
+    type: String,
     index: true,
     required: true,
   },
