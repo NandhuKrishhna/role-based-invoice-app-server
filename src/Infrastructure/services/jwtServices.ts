@@ -10,7 +10,7 @@ import Role from "../../Shared/constants/roles";
 
 
 export type RefreshTokenPayload = { sessionId: mongoose.Types.ObjectId, role: Role };
-export type AccessTokenPayload = { userId: mongoose.Types.ObjectId; sessionId: mongoose.Types.ObjectId, role: Role };
+export type AccessTokenPayload = { userId: string; sessionId: mongoose.Types.ObjectId, role: Role };
 
 type SignOptionsAndSecret = SignOptions & { secret: string };
 const defaults: SignOptions = { audience: ["user"] };
