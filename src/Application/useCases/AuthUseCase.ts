@@ -26,19 +26,19 @@ export class AuthUseCase implements IUserUseCase {
         appAssert(isValid, UNAUTHORIZED, ERROR_MESSAGES.INVALID_CREDENTIALS);
 
         const newSession = await this.__sessionRepository.createSession({
-            userId: existingUser._id as mongoose.Types.ObjectId,
+            userId: existingUser._id,
             role: existingUser.role,
             expiresAt: thirtyDaysFromNow(),
             createdAt: new Date(),
             userAgent: userData.userAgent
         });
         const sessionInfo: RefreshTokenPayload = {
-            sessionId: newSession._id as mongoose.Types.ObjectId,
+            sessionId: newSession._id!,
             role: newSession.role,
         };
         const accessToken = signToken({
             ...sessionInfo,
-            userId: existingUser._id as mongoose.Types.ObjectId,
+            userId: existingUser._id,
             role: existingUser.role,
         });
         const refreshToken = signToken(sessionInfo, refreshTokenSignOptions);
