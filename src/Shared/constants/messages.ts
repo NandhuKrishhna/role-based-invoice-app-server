@@ -13,6 +13,11 @@ export const ERROR_MESSAGES = {
     TARGET_ID_REQUIRED: "Target ID is required",
     ROLE_IS_REQUIRED: "Role is required",
     CANNOT_CHANGE_SUPER_ADMIN_ROLE: "You cannot change the role of a Super Admin",
+    CANNOT_DELETE_SUPER_ADMIN: "You cannot delete a Super Admin",
+    ADMIN_CREATION_FAILED: "Admin creation failed",
+    CANNOT_CHANGE_ADMIN_ROLE: "You cannot change the role of an Admin",
+    YOU_DID_NOT_CREATE_THIS_UNIT_MANAGER: "You did not create this unit manager",
+    UNIT_MANAGER_NOT_FOUND: "Unit Manager who created this user not found",
 
 
 
@@ -24,7 +29,10 @@ export const SUCCESS_MESSAGES = {
     PROFILE_UPDATED: "Profile updated successfully",
     PASSWORD_CHANGED: "Password changed successfully",
     ADMIN_CREATED: "Admin created successfully",
+    UNIT_MANAGER_CREATED: "Unit manager created successfully",
     USER_ROLE_UPDATED: "User role updated successfully",
+    USER_DELETED: "User deleted successfully",
+    USERS_FETCHED: "Users fetched successfully",
 };
 export const STATUS = {
     FAIL: "fail",

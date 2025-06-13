@@ -1,8 +1,7 @@
 enum Role {
     SUPER_ADMIN = "SUPER_ADMIN",
     ADMIN = "ADMIN",
-    MANAGER = "MANAGER",
-    STAFF = "STAFF",
+    UNIT_MANAGER = "UNIT_MANAGER",
     USER = "USER",
 }
 

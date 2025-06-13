@@ -15,3 +15,17 @@ export const createAdminSchema = z.object({
 
     group: z.string().optional(),
 });
+
+export const createUserManagerSchema = z.object({
+    name: z.string().min(2, ERROR_MESSAGES.NAME_TOO_SHORT),
+
+    email: z.string()
+        .email(ERROR_MESSAGES.INVALID_EMAIL),
+
+    password: z.string()
+        .min(6, ERROR_MESSAGES.PASSWORD_TOO_SHORT),
+
+    role: z.literal(Role.UNIT_MANAGER),
+
+    group: z.string().optional(),
+})

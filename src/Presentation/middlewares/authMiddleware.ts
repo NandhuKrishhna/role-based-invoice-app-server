@@ -11,7 +11,7 @@ import { ERROR_MESSAGES } from "../../Shared/constants/messages";
 
 
 export interface AuthenticatedRequest extends Request {
-  userId: mongoose.Types.ObjectId;
+  userId: string;
   sessionId: mongoose.Types.ObjectId;
   role: Role;
   user?: any;
@@ -34,11 +34,11 @@ const authenticate: RequestHandler = catchErrors(async (req: Request, res: Respo
   (req as AuthenticatedRequest).sessionId = payload.sessionId;
   (req as AuthenticatedRequest).role = payload.role;
 
-  const user = await UserModel.find({ _id: payload.userId })
+  const user = await UserModel.findOne({ _id: payload.userId })
     .select("-password -__v")
   appAssert(user, UNAUTHORIZED, ERROR_MESSAGES.USER_NOT_FOUND, AppErrorCode.UserNotFound);
 
-  // (req as AuthenticatedRequest).user = user;
+  (req as AuthenticatedRequest).user = user;
   next();
 });
 
