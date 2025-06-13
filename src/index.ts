@@ -13,6 +13,7 @@ import superAdminRoutes from "./Presentation/routes/superAdminRoutes";
 import Role from "./Shared/constants/roles";
 import authorizeRoles from "./Presentation/middlewares/roleBaseAuthentication";
 import cookieParser from "cookie-parser";
+import adminRouter from "./Presentation/routes/adminRoutes";
 const app = express();
 
 app.use(express.json());
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api", authRouter);
 app.use("/api/super-admin", authenticate, authorizeRoles([Role.SUPER_ADMIN]), superAdminRoutes);
+app.use("/api/admin", authenticate, authorizeRoles([Role.ADMIN]), adminRouter);
 
 app.use(errorHandler);
 
