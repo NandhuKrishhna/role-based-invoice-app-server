@@ -4,12 +4,13 @@ import Role from "../../../Shared/constants/roles";
 
 
 export interface UserDocument extends Document {
+    _id: string;
     name: string;
     email: string;
     password: string;
     role: Role;
     group?: string;
-    createdBy: mongoose.Types.ObjectId;
+    createdBy: string;
     status?: "blocked" | "active";
     profilePicture?: string;
     comparePassword(val: string): Promise<boolean>;
@@ -18,6 +19,11 @@ export interface UserDocument extends Document {
 
 const UserSchema: Schema = new Schema<UserDocument>(
     {
+        _id: {
+            type: String,
+            required: true,
+            trim: true,
+        },
         name: {
             type: String,
             required: true,
@@ -56,7 +62,7 @@ const UserSchema: Schema = new Schema<UserDocument>(
             default: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
         },
         createdBy: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: "User",
             required: false,
             default: null,
