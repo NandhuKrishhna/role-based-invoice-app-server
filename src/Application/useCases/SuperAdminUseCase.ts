@@ -18,7 +18,7 @@ export class SuperAdminUseCase {
 
         const generatedId = await generateUserId(adminData.role as Role);
 
-        const admin = await this.__userRepository.createAdmin({
+        const admin = await this.__userRepository.createUser({
             _id: generatedId,
             name: adminData.name,
             email: adminData.email,

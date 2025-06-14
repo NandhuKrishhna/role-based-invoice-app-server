@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Role from "../../Shared/constants/roles";
-import { UserDocument } from "../../Infrastructure/Database/Models/usermodel";
+import { UserDocument } from "../../Infrastructure/Database/Models/user.model";
 
 export interface IAdminDataParams {
     _id?: string;

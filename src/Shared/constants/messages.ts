@@ -15,9 +15,12 @@ export const ERROR_MESSAGES = {
     CANNOT_CHANGE_SUPER_ADMIN_ROLE: "You cannot change the role of a Super Admin",
     CANNOT_DELETE_SUPER_ADMIN: "You cannot delete a Super Admin",
     ADMIN_CREATION_FAILED: "Admin creation failed",
+    USER_CREATION_FAILED: "User creation failed",
     CANNOT_CHANGE_ADMIN_ROLE: "You cannot change the role of an Admin",
     YOU_DID_NOT_CREATE_THIS_UNIT_MANAGER: "You did not create this unit manager",
     UNIT_MANAGER_NOT_FOUND: "Unit Manager who created this user not found",
+    CANNOT_CHANGE_UNIT_MANAGER_ROLE: "You cannot change the role of a Unit Manager",
+    GROUP_REQUIRED: "Group is required"
 
 
 
@@ -33,6 +36,7 @@ export const SUCCESS_MESSAGES = {
     USER_ROLE_UPDATED: "User role updated successfully",
     USER_DELETED: "User deleted successfully",
     USERS_FETCHED: "Users fetched successfully",
+    USER_CREATED: "User created successfully"
 };
 export const STATUS = {
     FAIL: "fail",

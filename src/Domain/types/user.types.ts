@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Role from "../../Shared/constants/roles";
 
 export interface ILoginUserParams {
     email: string;
@@ -18,4 +19,22 @@ export interface ILoginUser {
     email: string;
     profilePicture: string;
     role: string;
+};
+
+export type GetAllUserResponse = {
+    _id: string;
+    name: string;
+    email: string;
+    role: Role;
+    group: string | null;
+    status: 'active' | 'inactive';
+    profilePicture: string;
+    createdBy: string | {
+        _id: string;
+        name: string;
+        email: string;
+        role: Role;
+    } | null;
+    createdAt: string;
+    updatedAt: string;
 };

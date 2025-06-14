@@ -6,7 +6,7 @@ import AppErrorCode from "../../Shared/constants/appErrorCode";
 import { UNAUTHORIZED } from "../../Shared/constants/http";
 import appAssert from "../../Shared/utils/appAssert";
 import { verifyToken } from "../../Infrastructure/services/jwtServices";
-import { UserModel } from "../../Infrastructure/Database/Models/usermodel";
+import { UserModel } from "../../Infrastructure/Database/Models/user.model";
 import { ERROR_MESSAGES } from "../../Shared/constants/messages";
 
 

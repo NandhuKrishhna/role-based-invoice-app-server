@@ -73,7 +73,7 @@ export class SuperAdminController implements ISuperAdminController {
         res.status(CREATED).json({
             success: true,
             message: SUCCESS_MESSAGES.USERS_FETCHED,
-            response: users
+            ...users
         });
     })
 }

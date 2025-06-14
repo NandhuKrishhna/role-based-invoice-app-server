@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { SortOrder } from "mongoose";
-import { UserModel, UserDocument } from "../Models/usermodel";
+import { UserModel, UserDocument } from "../Models/user.model";
 import { IUserRepository, IUserRepositoryToken } from "../../../Domain/repositories/IUserRepository";
 import { IAdminDataParams, IGetAllUsersParams } from "../../../Domain/types/admin.types";
 import Role from "../../../Shared/constants/roles";
@@ -21,9 +21,8 @@ export class UserRepository implements IUserRepository {
     };
 
 
-    async createAdmin(adminData: IAdminDataParams): Promise<UserDocument> {
+    async createUser(adminData: IAdminDataParams): Promise<UserDocument> {
         const newAdmin = await UserModel.create({ ...adminData });
-        console.log("New Admin Created:", newAdmin);
         return newAdmin;
     }
     async findUserById(userId: string): Promise<UserDocument | null> {
@@ -64,7 +63,9 @@ export class UserRepository implements IUserRepository {
 
         const skip = (page - 1) * limit;
 
-        const filters: any = {};
+        const filters: any = {
+            role: { $ne: "SUPER_ADMIN" },
+        };
 
         if (role) filters.role = role;
         if (status) filters.status = status;
@@ -83,6 +84,10 @@ export class UserRepository implements IUserRepository {
         const [users, total] = await Promise.all([
             UserModel.find(filters)
                 .select("-password -__v")
+                .populate({
+                    path: "createdBy",
+                    select: "name email role"
+                })
                 .skip(skip)
                 .limit(limit)
                 .sort(sort)

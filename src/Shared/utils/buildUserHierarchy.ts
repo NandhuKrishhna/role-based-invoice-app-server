@@ -1,4 +1,4 @@
-import { UserDocument, UserModel } from "../../Infrastructure/Database/Models/usermodel";
+import { UserDocument, UserModel } from "../../Infrastructure/Database/Models/user.model";
 import Role from "../constants/roles";
 
 export interface IUserNode {
