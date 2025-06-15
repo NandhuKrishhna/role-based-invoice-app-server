@@ -20,9 +20,13 @@ export const ERROR_MESSAGES = {
     YOU_DID_NOT_CREATE_THIS_UNIT_MANAGER: "You did not create this unit manager",
     UNIT_MANAGER_NOT_FOUND: "Unit Manager who created this user not found",
     CANNOT_CHANGE_UNIT_MANAGER_ROLE: "You cannot change the role of a Unit Manager",
-    GROUP_REQUIRED: "Group is required"
-
-
+    INVOICE_NUMBER_EXISTS: "Invoice number already exists in the same financial year",
+    INVOICE_NOT_FOUND: "Invoice not found",
+    CAN_ONLY_CREATE_ADMINS: "You can only create admins",
+    CAN_ONLY_CREATE_UNIT_MANAGERS: "You can only create unit managers",
+    CAN_ONLY_CREATE_USERS: "You can only create users",
+    GROUP_REQUIRED: "Group is required",
+    USER_NOT_CREATED_BY_YOU: "User not created by you. You can only update users created by you",
 
 };
 export const SUCCESS_MESSAGES = {
@@ -36,7 +40,11 @@ export const SUCCESS_MESSAGES = {
     USER_ROLE_UPDATED: "User role updated successfully",
     USER_DELETED: "User deleted successfully",
     USERS_FETCHED: "Users fetched successfully",
-    USER_CREATED: "User created successfully"
+    USER_CREATED: "User created successfully",
+    INVOICE_CREATED: "Invoice created successfully",
+    INVOICE_FETCHED: "Invoice fetched successfully",
+    INVOICE_UPDATED: "Invoice updated successfully",
+    INVOICE_DELETED: "Invoice deleted successfully",
 };
 export const STATUS = {
     FAIL: "fail",

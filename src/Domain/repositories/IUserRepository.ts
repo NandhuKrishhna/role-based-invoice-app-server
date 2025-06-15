@@ -15,8 +15,12 @@ export interface IUserRepository {
         limit: number;
         totalPages: number;
     }>;
-    findUsersByCreatorId(creatorId: string): Promise<UserDocument | null>;
+    findUsersByCreatorId(creatorId: string): Promise<UserDocument[]>;
     getAllUsersForAdmin(user: UserDocument, filter: IGetAllUsersParams): Promise<any>
+    findUsersByMultipleCreatorIds(creatorIds: string[]): Promise<UserDocument[]>
+    findAllUsers(): Promise<UserDocument[]>
+    findUsersByGroup(group: string[]): Promise<UserDocument[]>
+    findAllUsersForUM(userId: string, filter: IGetAllUsersParams, uniqueGroups: (string | undefined)[]): Promise<any>
 
 }
 

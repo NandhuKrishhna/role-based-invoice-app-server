@@ -9,6 +9,7 @@ import { ERROR_MESSAGES } from "../../Shared/constants/messages";
 
 const authorizeRoles = (requiredRoles: string[]): RequestHandler =>
   catchErrors(async (req: Request, res: Response, next: NextFunction) => {
+    console.log("This if from authorizeRoles middleware", requiredRoles)
     const { role } = req as AuthenticatedRequest;
     console.log("Role in authorizeRoles middleware:", role);
     console.log("Required roles in authorizeRoles middleware:", requiredRoles);

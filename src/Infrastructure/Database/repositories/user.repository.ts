@@ -106,11 +106,10 @@ export class UserRepository implements IUserRepository {
         };
     }
 
-    async findUsersByCreatorId(creatorId: string): Promise<UserDocument | null> {
-        const users = await UserModel.findOne({ createdBy: creatorId }).exec();
-        return users
-
+    async findUsersByCreatorId(creatorId: string): Promise<UserDocument[]> {
+        return await UserModel.find({ createdBy: creatorId }).lean().exec();
     }
+
 
     async getAllUsersForAdmin(user: UserDocument, filter: IGetAllUsersParams): Promise<any> {
         const {
@@ -124,6 +123,8 @@ export class UserRepository implements IUserRepository {
             sortOrder = "desc"
         } = filter;
 
+        const numericPage = Number(page);
+        const numericLimit = Number(limit);
         const sortDirection = sortOrder === "asc" ? 1 : -1;
 
         const basePipeline: any[] = [
@@ -227,6 +228,7 @@ export class UserRepository implements IUserRepository {
             { $replaceRoot: { newRoot: "$result" } },
             {
                 $match: {
+                    role: { $ne: Role.ADMIN },
                     ...(role && { role }),
                     ...(status && { status }),
                     ...(group && { group }),
@@ -238,13 +240,39 @@ export class UserRepository implements IUserRepository {
                     })
                 }
             },
+            // 🔽 Populate createdBy manually
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "createdBy",
+                    foreignField: "_id",
+                    as: "createdBy"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$createdBy",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: {
+                    createdBy: {
+                        _id: "$createdBy._id",
+                        name: "$createdBy.name",
+                        email: "$createdBy.email",
+                        role: "$createdBy.role"
+                    }
+                }
+            },
+            // 🔽 Final pagination and result
             {
                 $facet: {
                     metadata: [{ $count: "total" }],
                     data: [
                         { $sort: { [sortBy]: sortDirection } },
-                        { $skip: (page - 1) * limit },
-                        { $limit: limit }
+                        { $skip: (numericPage - 1) * numericLimit },
+                        { $limit: numericLimit }
                     ]
                 }
             }
@@ -253,14 +281,97 @@ export class UserRepository implements IUserRepository {
         const result = await UserModel.aggregate(basePipeline);
 
         const total = result[0].metadata[0]?.total || 0;
+        const totalPages = Math.ceil(total / numericLimit);
+
+        return {
+            total,
+            page: numericPage,
+            limit: numericLimit,
+            totalPages,
+            users: result[0].data
+        };
+    }
+
+    async findUsersByMultipleCreatorIds(creatorIds: string[]): Promise<UserDocument[]> {
+        return await UserModel.find({ createdBy: { $in: creatorIds } }).lean().exec();
+    }
+
+    async findAllUsers(): Promise<UserDocument[]> {
+        return await UserModel.find({}).lean().exec();
+    }
+    async findUsersByGroup(group: string[]): Promise<UserDocument[]> {
+        return await UserModel.find({ group: { $in: group } }).lean().exec();
+    }
+    async findAllUsersForUM(
+        userId: string,
+        filter: IGetAllUsersParams,
+        uniqueGroups: string[]
+    ): Promise<{
+        users: UserDocument[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }> {
+
+        const {
+            page = 1,
+            limit = 10,
+            search,
+            role,
+            status,
+            group,
+            sortBy = "createdAt",
+            sortOrder = "desc",
+        } = filter;
+
+        const skip = (page - 1) * limit;
+
+        const filters: any = {
+            role: { $ne: "SUPER_ADMIN" },
+            $or: [
+                { createdBy: userId },
+                { group: { $in: uniqueGroups } },
+            ],
+        };
+
+        if (role) filters.role = role;
+        if (status) filters.status = status;
+        if (group) filters.group = group;
+
+        if (search) {
+            filters.$or = filters.$or || [];
+            filters.$or.push(
+                { name: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } }
+            );
+        }
+
+        const sort: Record<string, SortOrder> = {};
+        sort[sortBy] = sortOrder === "asc" ? 1 : -1;
+
+        const [users, total] = await Promise.all([
+            UserModel.find(filters)
+                .select("-password -__v")
+                .populate({
+                    path: "createdBy",
+                    select: "name email role",
+                })
+                .skip(skip)
+                .limit(limit)
+                .sort(sort)
+                .exec(),
+            UserModel.countDocuments(filters),
+        ]);
+
         const totalPages = Math.ceil(total / limit);
 
         return {
+            users,
             total,
             page,
             limit,
             totalPages,
-            data: result[0].data
         };
     }
 

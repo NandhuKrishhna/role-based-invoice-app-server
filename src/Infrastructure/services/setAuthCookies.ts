@@ -4,7 +4,7 @@ import { NODE_ENV } from "../../Shared/constants/env";
 import { fifteenMinutesFromNow, thirtyDaysFromNow } from "../../Shared/utils/date";
 import { ENVIRONMENTS, TOKENS } from "../../Shared/constants/config";
 const secure = NODE_ENV === "production";
-export const REFRESH_PATH = "/api/auth/refresh";
+export const REFRESH_PATH = "/api/refresh";
 //TODO : fill domain in production
 const defaults: CookieOptions = {
   httpOnly: true,
