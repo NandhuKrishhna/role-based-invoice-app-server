@@ -14,6 +14,8 @@ import Role from "./Shared/constants/roles";
 import authorizeRoles from "./Presentation/middlewares/roleBaseAuthentication";
 import cookieParser from "cookie-parser";
 import adminRouter from "./Presentation/routes/adminRoutes";
+import unitManagerRouter from "./Presentation/routes/unitManagerRouter";
+import userRouter from "./Presentation/routes/userRoutes";
 const app = express();
 
 app.use(express.json());
@@ -32,7 +34,9 @@ app.get("/", (req, res) => {
 });
 app.use("/api", authRouter);
 app.use("/api/super-admin", authenticate, authorizeRoles([Role.SUPER_ADMIN]), superAdminRoutes);
-app.use("/api/admin", authenticate, authorizeRoles([Role.ADMIN]), adminRouter);
+app.use("/api/admin", authenticate, authorizeRoles([Role.ADMIN, Role.UNIT_MANAGER]), adminRouter);
+app.use("/api/unit-manager", authenticate, authorizeRoles([Role.UNIT_MANAGER]), unitManagerRouter);
+app.use("/api/user", authenticate, authorizeRoles([Role.USER]), userRouter);
 
 app.use(errorHandler);
 
