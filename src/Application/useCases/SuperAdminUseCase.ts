@@ -15,9 +15,8 @@ export class SuperAdminUseCase {
     async createAdminService(adminData: IAdminDataParams, userId: string, creatorRole: string): Promise<any> {
         const isAdminExists = await this.__userRepository.findUserByEmail(adminData.email);
         appAssert(!isAdminExists, CONFLICT, ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
-
+        appAssert(adminData.role === Role.ADMIN, CONFLICT, ERROR_MESSAGES.CAN_ONLY_CREATE_ADMINS);
         const generatedId = await generateUserId(adminData.role as Role);
-
         const admin = await this.__userRepository.createUser({
             _id: generatedId,
             name: adminData.name,
@@ -35,13 +34,10 @@ export class SuperAdminUseCase {
 
 
     async updateUserRoleService({ targetUserId, role, userId }: IUpdateUserRoleParams): Promise<any> {
-        const isSuperAdmin = await this.__userRepository.findUserById(userId);
-        appAssert(isSuperAdmin?.role !== Role.SUPER_ADMIN, CONFLICT, ERROR_MESSAGES.NOT_AUTHORIZED);
+
         const isTargetUser = await this.__userRepository.findUserById(targetUserId);
         appAssert(isTargetUser, CONFLICT, ERROR_MESSAGES.USER_NOT_FOUND);
-
-        appAssert(isTargetUser.role !== Role.SUPER_ADMIN, CONFLICT, ERROR_MESSAGES.CANNOT_CHANGE_SUPER_ADMIN_ROLE);
-
+        appAssert(isTargetUser.role !== Role.ADMIN, CONFLICT, ERROR_MESSAGES.CANNOT_CHANGE_SUPER_ADMIN_ROLE);
         const updatedUser = await this.__userRepository.updateUserRole(targetUserId, role);
         return {
             updatedUser: updatedUser.omitPassword(),
@@ -52,7 +48,6 @@ export class SuperAdminUseCase {
         const user = await this.__userRepository.findUserById(targetUserId);
         appAssert(user, CONFLICT, ERROR_MESSAGES.USER_NOT_FOUND);
         appAssert(user.role !== Role.SUPER_ADMIN, CONFLICT, ERROR_MESSAGES.CANNOT_DELETE_SUPER_ADMIN);
-
         await this.__userRepository.deleteUserById(targetUserId);
     };
 
@@ -61,4 +56,8 @@ export class SuperAdminUseCase {
         return users;
 
     }
+
+
+
+
 }

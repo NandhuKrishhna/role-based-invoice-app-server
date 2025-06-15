@@ -9,15 +9,10 @@ import { AuthenticatedRequest } from "../../middlewares/authMiddleware";
 import { ISuperAdminController } from "../../../Domain/interfaces/ISuperAdminController";
 import appAssert from "../../../Shared/utils/appAssert";
 
+
 @Service()
 export class SuperAdminController implements ISuperAdminController {
     constructor(@Inject() private __superAdminUseCase: SuperAdminUseCase) { }
-
-
-
-
-
-
 
     createAdminHandler = catchErrors(async (req: Request, res: Response) => {
         const request = createAdminSchema.parse({
@@ -75,5 +70,9 @@ export class SuperAdminController implements ISuperAdminController {
             message: SUCCESS_MESSAGES.USERS_FETCHED,
             ...users
         });
-    })
+    });
+
+
+
+
 }
