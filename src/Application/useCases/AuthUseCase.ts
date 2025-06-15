@@ -4,11 +4,10 @@ import appAssert from "../../Shared/utils/appAssert";
 import { BAD_REQUEST, UNAUTHORIZED } from "../../Shared/constants/http";
 import { ERROR_MESSAGES, STATUS } from "../../Shared/constants/messages";
 import { ISessionRepository, ISessionRepositoryToken } from "../../Domain/repositories/ISessionRepository";
-import mongoose from "mongoose";
-import { thirtyDaysFromNow } from "../../Shared/utils/date";
-import { RefreshTokenPayload, refreshTokenSignOptions, signToken } from "../../Infrastructure/services/jwtServices";
+import { ONE_DAY_MS, thirtyDaysFromNow } from "../../Shared/utils/date";
+import { AccessTokenPayload, RefreshTokenPayload, refreshTokenSignOptions, signToken, verifyToken } from "../../Infrastructure/services/jwtServices";
 import { IUserRepository, IUserRepositoryToken } from "../../Domain/repositories/IUserRepository";
-import { IUserUseCase, IUserUseCaseToken } from "../../Domain/repositories/IUserUseCase";
+import { IUserUseCase } from "../../Domain/repositories/IUserUseCase";
 
 
 @Service()
@@ -47,5 +46,42 @@ export class AuthUseCase implements IUserUseCase {
             accessToken,
             refreshToken,
         };
+    }
+    async setRefreshToken(refreshToken: string) {
+        const { payload } = verifyToken<RefreshTokenPayload>(refreshToken, {
+            secret: refreshTokenSignOptions.secret,
+        });
+        appAssert(payload, UNAUTHORIZED, "Invalid refresh token");
+        const session = await this.__sessionRepository.findById(payload.sessionId);
+        appAssert(session?.role === payload.role, UNAUTHORIZED, "UnAuthorized! Please Login Again");
+        appAssert(session && session.expiresAt.getTime() > Date.now(), UNAUTHORIZED, "Session expired");
+        const sessionNeedsRefresh = session.expiresAt.getTime() - Date.now() <= ONE_DAY_MS;
+        if (sessionNeedsRefresh) {
+            await this.__sessionRepository.updateSession(session._id!, {
+                expiresAt: thirtyDaysFromNow(),
+            });
+        }
+
+        const newRefreshToken = sessionNeedsRefresh
+            ? signToken(
+                {
+                    sessionId: session._id!,
+                    role: payload.role,
+                },
+                refreshTokenSignOptions
+            )
+            : refreshToken;
+        const accessToken = signToken({
+            userId: session.userId,
+            sessionId: session._id!,
+            role: session.role,
+        });
+        return {
+            accessToken,
+            newRefreshToken,
+        };
+    }
+    async logoutUser(payload: AccessTokenPayload) {
+        await this.__sessionRepository.findByIdAndDelete(payload.sessionId);
     }
 }

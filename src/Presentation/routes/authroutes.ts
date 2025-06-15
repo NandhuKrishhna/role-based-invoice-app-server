@@ -8,5 +8,7 @@ const authRouter = Router();
 const authController = Container.get(AuthController);
 
 authRouter.post("/login", authController.loginHandler);
+authRouter.get("/refresh", authController.refreshHandler);
+authRouter.get("/logout", authController.logoutHandler);
 
 export default authRouter;
