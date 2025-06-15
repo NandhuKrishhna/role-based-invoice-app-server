@@ -9,15 +9,7 @@ import appAssert from "../../Shared/utils/appAssert";
 import { AdminUseCase } from "../../Application/useCases/AdminUseCase";
 import { IAdminController } from "../../Domain/interfaces/IAdminController";
 import Role from "../../Shared/constants/roles";
-interface IGetAllUsersParams {
-    page?: string;
-    limit?: string;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    role?: Role;
-    createdBy?: string;
-}
+import { invoiceSchema, updateInvoiceSchema } from "./validators/inVoiceSchema";
 
 
 @Service()
@@ -28,12 +20,12 @@ export class AdminController implements IAdminController {
         const request = createUserManagerSchema.parse({
             ...req.body,
         })
-        const { userId, role } = req as AuthenticatedRequest;
-        const { admin } = await this.__adminUseCase.createAdminService(request, userId);
+        const { userId } = req as AuthenticatedRequest;
+        const { user } = await this.__adminUseCase.createAdminService(request, userId);
         res.status(CREATED).json({
             success: true,
             message: SUCCESS_MESSAGES.UNIT_MANAGER_CREATED,
-            response: admin,
+            response: user,
         })
     });
 
@@ -55,9 +47,9 @@ export class AdminController implements IAdminController {
 
     deleteUserHandler = catchErrors(async (req: Request, res: Response) => {
         const { userId: targetUserId } = req.body;
-        const { userId: creatorId } = req as AuthenticatedRequest;
+        const { userId: creatorId, role } = req as AuthenticatedRequest;
         appAssert(targetUserId, UNAUTHORIZED, ERROR_MESSAGES.TARGET_ID_REQUIRED);
-        await this.__adminUseCase.deleteUserService(targetUserId, creatorId);
+        await this.__adminUseCase.deleteUserService(targetUserId, creatorId, role);
 
         res.status(CREATED).json({
             success: true,
@@ -69,14 +61,62 @@ export class AdminController implements IAdminController {
     getAllUsersHandler = catchErrors(async (req: Request, res: Response) => {
 
         const { user } = req as AuthenticatedRequest
+        console.log(user)
         const { users } = await this.__adminUseCase.getAllUsersService(user, req.query)
         res.status(OK).json({
             success: true,
             message: SUCCESS_MESSAGES.USERS_FETCHED,
-            users
+            ...users
         });
     })
 
+    createInVoiceHandler = catchErrors(async (req: Request, res: Response) => {
+        const { userId, role } = req as AuthenticatedRequest;
+        const invoice = invoiceSchema.parse({
+            ...req.body
+        })
+
+        const response = await this.__adminUseCase.createInvoiceService(invoice, userId, role);
+        res.status(CREATED).json({
+            success: true,
+            message: SUCCESS_MESSAGES.INVOICE_CREATED,
+            response
+        })
+    })
+
+    getAllInvoicesHandler = catchErrors(async (req: Request, res: Response) => {
+        const { user, role } = req as AuthenticatedRequest;
+        const response = await this.__adminUseCase.getUserHierarchyInvoices(user, req.query);
+        res.status(OK).json({
+            success: true,
+            message: SUCCESS_MESSAGES.INVOICE_FETCHED,
+            response
+        })
+    })
+
+    updateInvoiceHandler = catchErrors(async (req: Request, res: Response) => {
+        const { userId, role } = req as AuthenticatedRequest;
+        const invoice = updateInvoiceSchema.parse({
+            ...req.body
+        })
+        const response = await this.__adminUseCase.updateInvoiceService(invoice, userId, role);
+        res.status(CREATED).json({
+            success: true,
+            message: SUCCESS_MESSAGES.INVOICE_UPDATED,
+            response
+        })
+    })
+
+    deleteInvoiceHandler = catchErrors(async (req: Request, res: Response) => {
+        const { userId, role } = req as AuthenticatedRequest;
+        const { invoiceId } = req.body;
+        const response = await this.__adminUseCase.deleteInvoiceService(invoiceId, userId, role);
+        res.status(CREATED).json({
+            success: true,
+            message: SUCCESS_MESSAGES.INVOICE_DELETED,
+            response
+        })
+    })
 
 
 }
