@@ -10,8 +10,9 @@ const defaults: CookieOptions = {
   httpOnly: true,
   secure: NODE_ENV === ENVIRONMENTS.PRODUCTION,
   sameSite: NODE_ENV === ENVIRONMENTS.PRODUCTION ? "none" : "strict",
-  domain: NODE_ENV === ENVIRONMENTS.PRODUCTION ? "" : undefined
+  domain: NODE_ENV === ENVIRONMENTS.PRODUCTION ? ".invoice.nandhu.live" : undefined,
 };
+
 
 export const getAccessTokenCookieOptions = (): CookieOptions => ({
   ...defaults,
