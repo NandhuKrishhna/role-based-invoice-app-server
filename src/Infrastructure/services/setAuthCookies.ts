@@ -8,10 +8,11 @@ export const REFRESH_PATH = "/api/refresh";
 //TODO : fill domain in production
 const defaults: CookieOptions = {
   httpOnly: true,
-  secure: NODE_ENV === ENVIRONMENTS.PRODUCTION,
-  sameSite: NODE_ENV === ENVIRONMENTS.PRODUCTION ? "none" : "strict",
-  domain: NODE_ENV === ENVIRONMENTS.PRODUCTION ? ".invoice.nandhu.live" : undefined,
+  secure: true,
+  sameSite: "none",
+  domain: undefined,
 };
+
 
 
 export const getAccessTokenCookieOptions = (): CookieOptions => ({
